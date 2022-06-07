@@ -6,16 +6,22 @@
 #    By: blevrel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/07 13:48:57 by blevrel           #+#    #+#              #
-#    Updated: 2022/06/07 13:49:23 by blevrel          ###   ########.fr        #
+#    Updated: 2022/06/07 18:11:27 by blevrel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-NAME = minitalk
+NAMESERV = server
 
-SRCS =	
+NAMECLIENT = client
 
-OBJS = ${SRCS:.c=.o}
+SRCSCLIENT =	srcs/client.c
+
+SRCSSERV = 		srcs/server.c
+
+OBJSCLIENT = ${SRCSCLIENT:.c=.o}
+
+OBJSSERV = ${SRCSSERV:.c=.o}
 
 CC = gcc
 
@@ -27,21 +33,24 @@ HEAD = -I libft -I includes
 
 RM = rm -f
 
-all: ${NAME}
+all: ${NAMECLIENT} ${NAMESERV}
 
 clean:
 	make clean -C libft
-${RM} ${OBJS}
+	${RM} ${OBJSCLIENT} ${OBJSSERV}
 
 fclean: clean
 	make fclean -C libft
-	${RM} ${NAME}
+	${RM} ${NAMESERV} ${NAMECLIENT}
 
 re: fclean all
 
 .c.o:
-	${CC} ${FLAGS} -c ${HEAD} $< -o ${<:.c=.o}
+	${CC} -c ${HEAD} $< -o ${<:.c=.o}
 
-${NAME}: ${OBJS}
+${NAMECLIENT}: ${OBJSCLIENT}
 	make -C libft
-	${CC} ${FLAGS} ${OBJS} ${HEAD} ${LIB} -o ${NAME} -g
+	${CC} ${OBJSCLIENT} ${HEAD} ${LIB} -o ${NAMECLIENT} -g
+
+${NAMESERV}: ${OBJSSERV}
+	${CC} ${OBJSSERV} ${HEAD} ${LIB} -o ${NAMESERV} -g
