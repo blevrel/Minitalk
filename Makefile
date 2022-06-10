@@ -6,7 +6,7 @@
 #    By: blevrel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/07 13:48:57 by blevrel           #+#    #+#              #
-#    Updated: 2022/06/07 18:11:27 by blevrel          ###   ########.fr        #
+#    Updated: 2022/06/10 11:11:48 by blevrel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,11 +46,11 @@ fclean: clean
 re: fclean all
 
 .c.o:
-	${CC} -c ${HEAD} $< -o ${<:.c=.o}
+	${CC} ${FLAGS} -c ${HEAD} $< -o ${<:.c=.o}
 
 ${NAMECLIENT}: ${OBJSCLIENT}
 	make -C libft
-	${CC} ${OBJSCLIENT} ${HEAD} ${LIB} -o ${NAMECLIENT} -g
+	${CC} ${FLAGS} ${OBJSCLIENT} ${HEAD} ${LIB} -o ${NAMECLIENT} -g
 
 ${NAMESERV}: ${OBJSSERV}
-	${CC} ${OBJSSERV} ${HEAD} ${LIB} -o ${NAMESERV} -g
+	${CC} ${FLAGS} ${OBJSSERV} ${HEAD} ${LIB} -o ${NAMESERV} -g
