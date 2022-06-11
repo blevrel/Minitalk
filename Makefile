@@ -6,7 +6,7 @@
 #    By: blevrel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/07 13:48:57 by blevrel           #+#    #+#              #
-#    Updated: 2022/06/10 11:11:48 by blevrel          ###   ########.fr        #
+#    Updated: 2022/06/11 16:00:11 by blevrel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ NAMECLIENT = client
 
 SRCSCLIENT =	srcs/client.c
 
-SRCSSERV = 		srcs/server.c
+SRCSSERV = 		srcs/server.c srcs/confirm_signal.c
 
 OBJSCLIENT = ${SRCSCLIENT:.c=.o}
 

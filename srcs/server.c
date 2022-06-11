@@ -6,7 +6,7 @@
 /*   By: blevrel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 14:11:20 by blevrel           #+#    #+#             */
-/*   Updated: 2022/06/10 11:17:55 by blevrel          ###   ########.fr       */
+/*   Updated: 2022/06/11 17:59:08 by blevrel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minitalk.h"
@@ -15,19 +15,23 @@ void	catch_signal(int signal)
 {
 	static int	i = 0;
 	static int	size = 0;
-	
+	static int	pid = 0;
+	static int	trigger = 0;
+
+	if (i < 32 && trigger == 0)
+	{
+		pid = get_pid(signal);
+		i++;
+		if (i == 32)
+		{
+			i = 0;
+			trigger = 1;
+		}
+		return ;
+	}
 	if (i < 32)
 	{
-		if (signal == SIGUSR1)
-		{
-			size = size << 1;
-			size = size | 0;
-		}
-		else if (signal == SIGUSR2)
-		{
-			size = size << 1;
-			size = size | 1;
-		}
+		size = fill_size(signal, size);
 		i++;
 		return ;
 	}
@@ -37,11 +41,29 @@ void	catch_signal(int signal)
 		i++;
 		if ((i - 32) == (size * 8))
 		{
+			kill(pid, SIGUSR2);
 			i = 0;
 			size = 0;
+			pid = 0;
+			trigger = 0;
 		}
 		return ;
 	}
+}
+
+int	fill_size(int signal, int size)
+{
+	if (signal == SIGUSR1)
+	{
+		size = size << 1;
+		size = size | 0;
+	}
+	else if (signal == SIGUSR2)
+	{
+		size = size << 1;
+		size = size | 1;
+	}
+	return (size);
 }
 
 void	fill_char(int signal, int size)
@@ -61,7 +83,7 @@ void	fill_char(int signal, int size)
 			c = c << 1;
 			c = c | 1;
 		}
-	i++;
+		i++;
 	}
 	if (i == 8)
 	{
@@ -93,9 +115,9 @@ void	fill_str(char c, int size)
 	}
 }
 
-int	main()
+int	main(void)
 {
-	ft_printf("%d\n", getpid());
+	ft_printf ("\033[0;32mPID : %d\033[0m\n", getpid());
 	signal(SIGUSR1, catch_signal);
 	signal(SIGUSR2, catch_signal);
 	while (1)
