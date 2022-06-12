@@ -6,7 +6,7 @@
 /*   By: blevrel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 14:11:06 by blevrel           #+#    #+#             */
-/*   Updated: 2022/06/11 17:58:52 by blevrel          ###   ########.fr       */
+/*   Updated: 2022/06/12 11:43:28 by blevrel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minitalk.h"
@@ -19,12 +19,13 @@ int	main(int argc, char **argv)
 	int		i;
 
 	i = 31;
-	if (argc != 3)
-		return (ft_printf("Arguments must be the PID and a string to send\n"));
 	pid = ft_atoi(argv[1]);
+	if (argc != 3 || pid == 0 || verify_args(argv[1], pid) == 1)
+		return (ft_printf("Arguments must be the PID and one string to send\n"));
 	str = argv[2];
 	if (str[0] == '\0')
 		return (ft_printf("Empty string is not a valid argument\n"));
+	signal(SIGUSR2, catch_signal_client);
 	size = ft_strlen(str);
 	send_client_pid(pid);
 	while (i >= 0)
@@ -33,7 +34,6 @@ int	main(int argc, char **argv)
 		i--;
 	}
 	send_bits(pid, str);
-	signal(SIGUSR2, catch_signal_client);
 	while (1)
 		continue ;
 }
@@ -54,7 +54,7 @@ void	catch_signal_client(int signal)
 {
 	if (signal == SIGUSR2)
 	{
-		ft_printf("Bien recu\n");
+		ft_printf("Bien reçu !\n");
 		exit (1);
 	}
 }

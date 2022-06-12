@@ -6,7 +6,7 @@
 /*   By: blevrel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 14:11:20 by blevrel           #+#    #+#             */
-/*   Updated: 2022/06/11 17:59:08 by blevrel          ###   ########.fr       */
+/*   Updated: 2022/06/12 11:26:23 by blevrel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minitalk.h"
@@ -27,32 +27,21 @@ void	catch_signal(int signal)
 			i = 0;
 			trigger = 1;
 		}
-		return ;
 	}
-	if (i < 32)
-	{
-		size = fill_size(signal, size);
-		i++;
-		return ;
-	}
-	if ((i - 32) < (size * 8))
+	else if (i < 32)
+		size = fill_size(signal, size, &i);
+	else if ((i - 32) < (size * 8))
 	{
 		fill_char(signal, size);
 		i++;
 		if ((i - 32) == (size * 8))
-		{
-			kill(pid, SIGUSR2);
-			i = 0;
-			size = 0;
-			pid = 0;
-			trigger = 0;
-		}
-		return ;
+			send_signal_and_reset(&i, &size, &pid, &trigger);
 	}
 }
 
-int	fill_size(int signal, int size)
+int	fill_size(int signal, int size, int *i)
 {
+	(*i)++;
 	if (signal == SIGUSR1)
 	{
 		size = size << 1;
