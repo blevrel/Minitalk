@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: blevrel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 14:11:20 by blevrel           #+#    #+#             */
-/*   Updated: 2022/06/19 08:29:59 by blevrel          ###   ########.fr       */
+/*   Updated: 2022/06/19 08:34:20 by blevrel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minitalk.h"
@@ -15,18 +15,27 @@ void	catch_signal(int signal)
 {
 	static int	i = 0;
 	static int	size = 0;
+	static int	pid = 0;
+	static int	trigger = 0;
 
-	if (i < 32)
+	if (i < 32 && trigger == 0)
+	{
+		pid = get_pid(signal);
+		i++;
+		if (i == 32)
+		{
+			i = 0;
+			trigger = 1;
+		}
+	}
+	else if (i < 32)
 		size = fill_size(signal, size, &i);
 	else if ((i - 32) < (size * 8))
 	{
 		fill_char(signal, size);
 		i++;
 		if ((i - 32) == (size * 8))
-		{
-			i = 0;
-			size = 0;
-		}
+			send_signal_and_reset(&i, &size, &pid, &trigger);
 	}
 }
 

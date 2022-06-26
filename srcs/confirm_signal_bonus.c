@@ -1,32 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   verify_args.c                                      :+:      :+:    :+:   */
+/*   confirm_signal.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: blevrel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/12 11:40:32 by blevrel           #+#    #+#             */
-/*   Updated: 2022/06/12 11:51:11 by blevrel          ###   ########.fr       */
+/*   Created: 2022/06/11 15:44:25 by blevrel           #+#    #+#             */
+/*   Updated: 2022/06/12 11:26:11 by blevrel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minitalk.h"
 
-int	verify_args(char *str, int pid)
+int	get_pid(int signal)
 {
-	size_t	size;
-	int		size_nb;
-	size_t	i;
+	static int	client_pid = 0;
 
-	size_nb = 0;
-	i = 0;
-	size = ft_strlen(str);
-	while (pid > 0)
+	if (signal == SIGUSR1)
 	{
-		size_nb = pid / 10;
-		pid = size_nb;
-		i++;
+		client_pid = client_pid << 1;
+		client_pid = client_pid | 0;
 	}
-	if (size != i)
-		return (1);
-	return (0);
+	else if (signal == SIGUSR2)
+	{
+		client_pid = client_pid << 1;
+		client_pid = client_pid | 1;
+	}
+	return (client_pid);
+}
+
+void	send_signal_and_reset(int *i, int *size, int *pid, int *trigger)
+{
+	kill(*pid, SIGUSR2);
+	*i = 0;
+	*size = 0;
+	*pid = 0;
+	*trigger = 0;
 }
